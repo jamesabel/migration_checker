@@ -27,11 +27,13 @@ if args.verbose:
     print('output', output_file_path)
 
 count = 0
+total_size = 0
 with gzip.open(output_file_path, 'w') as output_file:
     for root, dirs, files in os.walk(args.path):
         for name in files:
             full_path = os.path.abspath(os.path.join(root, name))
             output_file.write(bytes(full_path, ENCODING))
+            size = 0
             try:
                 size = os.path.getsize(full_path)
                 output_file.write(bytes(',', ENCODING))
@@ -48,7 +50,9 @@ with gzip.open(output_file_path, 'w') as output_file:
                     print('could not get attributes', full_path)
             output_file.write(bytes(os.linesep, ENCODING))
             count += 1
+            total_size += size
 
 if args.verbose:
     print(count, 'files')
+    print(total_size, 'bytes')
 

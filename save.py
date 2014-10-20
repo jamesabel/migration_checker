@@ -5,8 +5,6 @@ import argparse
 import platform
 import gzip
 
-# todo: Linux port
-
 OUTPUT_FILE_EXT = '.mic'  # MIgration Checker
 ENCODING = 'UTF-8'
 

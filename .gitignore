@@ -53,3 +53,7 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# JCA
+.idea
+repo_ignore

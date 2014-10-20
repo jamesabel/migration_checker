@@ -4,8 +4,10 @@ import win32api
 import argparse
 import platform
 import gzip
+import subprocess
 
-OUTPUT_FILE_EXT = '.mic'  # MIgration Checker
+WALK_FILE_EXT = '.mic'  # MIgration Checker
+DIR_FILE_EXT = '.txt'  # just a text file
 ENCODING = 'UTF-8'
 
 description_string = 'Save the file system information so it can be checked later by check.py.'
@@ -18,7 +20,7 @@ parser.add_argument('-p', '--path', required=True, help='Path to the root of the
 
 args = parser.parse_args()
 
-output_file_path = platform.node() + OUTPUT_FILE_EXT + '.gz'
+output_file_path = platform.node() + WALK_FILE_EXT + '.gz'
 if args.output:
     output_file_path = os.path.join(args.output, output_file_path)
 
@@ -56,3 +58,25 @@ if args.verbose:
     print(count, 'files')
     print(total_size, 'bytes')
 
+# now, do a dir in the OS to get the files
+
+def do_dir(special = None):
+    output_file_path = platform.node()
+    if special:
+        output_file_path += '_' + special
+    output_file_path += DIR_FILE_EXT
+    if args.output:
+        output_file_path = os.path.join(args.output, output_file_path)
+    output_file_path = os.path.abspath(output_file_path)
+    cmd = ['dir', '/s']
+    if special:
+        cmd.append('/' + special)
+    if args.verbose:
+        print(args.path, cmd, output_file_path)
+    with open(output_file_path, 'w') as f:
+        sp = subprocess.Popen(cmd, cwd=args.path, shell=True, stdout=f)
+        sp.wait()
+
+do_dir()  # regular
+do_dir('AH')  # hidden
+do_dir('AS')  # system

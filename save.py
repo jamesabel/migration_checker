@@ -80,3 +80,6 @@ def do_dir(special = None):
 do_dir()  # regular
 do_dir('AH')  # hidden
 do_dir('AS')  # system
+
+if args.verbose:
+    print('done')

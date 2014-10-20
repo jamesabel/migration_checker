@@ -32,10 +32,20 @@ with gzip.open(output_file_path, 'w') as output_file:
         for name in files:
             full_path = os.path.abspath(os.path.join(root, name))
             output_file.write(bytes(full_path, ENCODING))
-            output_file.write(bytes(',', ENCODING))
-            output_file.write(bytes(str(os.path.getsize(full_path)), ENCODING))
-            output_file.write(bytes(',', ENCODING))
-            output_file.write(bytes(str(win32api.GetFileAttributes(full_path)), ENCODING))  # windows
+            try:
+                size = os.path.getsize(full_path)
+                output_file.write(bytes(',', ENCODING))
+                output_file.write(bytes(str(size), ENCODING))
+            except:
+                if args.verbose:
+                    print('could not get size', full_path)
+            try:
+                file_attrib = win32api.GetFileAttributes(full_path)
+                output_file.write(bytes(',', ENCODING))
+                output_file.write(bytes(str(file_attrib), ENCODING))  # windows
+            except:
+                if args.verbose:
+                    print('count not get attributes', full_path)
             output_file.write(bytes(os.linesep, ENCODING))
             count += 1
 
